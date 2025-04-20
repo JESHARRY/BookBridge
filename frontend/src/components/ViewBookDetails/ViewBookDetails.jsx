@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaShoppingCart, FaHeart, FaEdit } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { MdOutlineDelete } from "react-icons/md";
 import axios from "axios";
 
 const ViewBookDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,7 +17,6 @@ const ViewBookDetails = () => {
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const role = useSelector((state) => state.auth.role);
-  console.log(isLoggedIn, role);
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -70,7 +71,6 @@ const ViewBookDetails = () => {
       console.error("Error adding to cart:", error);
     }
   };
-  
 
   const handleAction = (actionType) => {
     setIsRotating(true);
@@ -85,6 +85,15 @@ const ViewBookDetails = () => {
     }, 2500);
   };
 
+  const deleteBook = async () => {
+    const response = await axios.delete(
+      "http://localhost:1000/api/v1/delete-book",
+      { headers }
+    );
+    alert(response.data.message);
+    navigate("/all-books");
+  };
+
   if (loading) return <div className="text-white text-center mt-5">Loading...</div>;
   if (error) return <div className="text-red-500 text-center mt-5">Error: {error}</div>;
 
@@ -92,19 +101,15 @@ const ViewBookDetails = () => {
     <div className="w-full min-h-screen bg-zinc-900 flex items-center justify-center px-12 py-10">
       <div className="w-full max-w-6xl flex flex-wrap lg:flex-nowrap gap-6">
         
-        {/* Book Cover + Icon Buttons */}
+        {/* Book Cover + Buttons */}
         {isLoggedIn === true && role === "user" && (
           <div className="relative bg-zinc-800 rounded-lg p-6 w-full lg:w-2/5 flex items-center justify-center shadow-lg border-[1px] border-gray-500 shadow-gray-900">
-          
-            {/* Favourites Button (Top-Right) */}
             <button 
               className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 text-gray-400 hover:border-red-500 hover:text-red-500 transition-transform transform hover:scale-110 bg-zinc-700 p-2"
               onClick={handleFavourite}
             >
               <FaHeart size={16} />
             </button>
-
-            {/* Book Cover with Rotation Effect */}
             {data && (
               <img
                 src={data.url}
@@ -114,8 +119,6 @@ const ViewBookDetails = () => {
                 }`}
               />
             )}
-
-            {/* Add to Cart Button (Bottom-Left) */}
             <button 
               className="absolute bottom-4 left-4 w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 text-gray-400 hover:border-green-500 hover:text-green-500 transition-transform transform hover:scale-110 bg-zinc-700 p-2"
               onClick={handleCart}
@@ -127,16 +130,16 @@ const ViewBookDetails = () => {
 
         {isLoggedIn === true && role === "admin" && (
           <div className="relative bg-zinc-800 rounded-lg p-6 w-full lg:w-2/5 flex items-center justify-center shadow-lg border-[1px] border-gray-500 shadow-gray-900">
-          
-            {/* Edit Button (Top-Right) */}
-            <button 
-              className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 text-gray-400 hover:border-red-500 hover:text-red-500 transition-transform transform hover:scale-110 bg-zinc-700 p-2"
-              onClick={() => handleAction("favorite")}
+            {/* Edit Button */}
+            <Link 
+              to={`/updateBook/${id}`}
+              className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 text-gray-400 hover:border-yellow-500 hover:text-yellow-500 transition-transform transform hover:scale-110 bg-zinc-700 p-2"
+              onClick={() => navigate(`/edit-book/${id}`)}
             >
               <FaEdit size={16} />
-            </button>
+            </Link>
 
-            {/* Book Cover with Rotation Effect */}
+            {/* Book Image */}
             {data && (
               <img
                 src={data.url}
@@ -147,12 +150,12 @@ const ViewBookDetails = () => {
               />
             )}
 
-            {/* Delete Button (Bottom-Left) */}
+            {/* Delete Button */}
             <button 
-              className="absolute bottom-4 left-4 w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 text-gray-400 hover:border-green-500 hover:text-green-500 transition-transform transform hover:scale-110 bg-zinc-700 p-2"
-              onClick={() => handleAction("cart")}
+              className="absolute bottom-4 left-4 w-10 h-10 flex items-center justify-center rounded-full border border-gray-500 text-gray-400 hover:border-red-500 hover:text-red-500 transition-transform transform hover:scale-110 bg-zinc-700 p-2"
+              onClick={deleteBook}
             >
-              <MdOutlineDelete />
+              <MdOutlineDelete size={16} />
             </button>
           </div>
         )}

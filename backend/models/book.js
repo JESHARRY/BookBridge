@@ -1,34 +1,35 @@
 const mongoose = require("mongoose");
 
 const book = new mongoose.Schema({
-    url:{
+    url: {
         type: String,
-        required:true
+        required: true
     },
-    title:{
+    title: {
         type: String,
-        required:true
+        required: true
     },
-    author:{
+    author: {
         type: String,
-        required:true
+        required: true
     },
-    price :{
+    price: {
         type: String,
-        required:true
+        required: true
     },
-    desc:{
+    desc: {
         type: String,
-        required:true
+        required: true
     },
-    genre:{
-        type:String,
-        required:true
-    },
-    language:{
+    genre: {
         type: String,
-        required:true
+        required: true
     },
-},{timestamps:true});
+    language: {
+        type: String,
+        required: true
+    },
+}, { timestamps: true });
 
-module.exports = mongoose.model("books",book);
+// ✅ Register model as "Book" (capitalized singular)
+module.exports = mongoose.model("Book", book);

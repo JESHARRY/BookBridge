@@ -2,11 +2,14 @@ const mongoose = require('mongoose');
 const order = new mongoose.Schema({
     user: {
         type : mongoose.Types.ObjectId,
-        ref : "user",
+        ref : "User",
+        required: true,
     },
     book: {
         type: mongoose.Types.ObjectId,
-        ref: "books",
+        ref: "Book",
+        required: true,
+
     },
     status: {
         type: String,
@@ -16,4 +19,4 @@ const order = new mongoose.Schema({
 }, {timestamps:true}
 );
 
-module.exports = mongoose.model("order",order);
+module.exports = mongoose.model("Order",order);

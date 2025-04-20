@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Snackbar } from "@mui/material";
+import { FaUser, FaEnvelope, FaLock, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -16,26 +17,22 @@ const SignUp = () => {
   const [emailError, setEmailError] = useState("");
   const navigate = useNavigate();
 
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "phoneNumber" && (isNaN(value) || value.length > 10)) return;
     setFormData((prevValues) => ({ ...prevValues, [name]: value }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const { username, email, password, confirmPassword, address, phoneNumber } = formData;
 
-    // Check for empty fields
     if (!username || !email || !password || !confirmPassword || !address || !phoneNumber) {
       alert("All fields are required!");
       return;
     }
 
-    // Check password confirmation
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
@@ -55,55 +52,71 @@ const SignUp = () => {
         throw new Error(data.message || "Signup failed");
       }
 
-      alert("Signup successful. Please check your email for OTP verification.");
-      navigate(`/otp?email=${encodeURIComponent(email)}`);
+      setSnackbarOpen(true);
+      setTimeout(() => navigate(`/otp?email=${encodeURIComponent(email)}`), 2500);
 
     } catch (error) {
       console.error("Error signing up:", error);
     }
   };
 
-  return (
-    <div className="min-h-screen flex flex-col bg-zinc-900 px-12">
-      <div className="flex-grow flex items-center justify-center">
-        <div className="bg-zinc-800 rounded-lg px-8 py-5 w-full md:w-3/6 lg:w-2/6">
-          <p className="text-zinc-200 text-xl">Sign Up</p>
-          <form onSubmit={handleSubmit}>
-            {Object.keys(formData).map((key) => (
-              <div className="mt-4" key={key}>
-                <label htmlFor={key} className="text-zinc-400">
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
-                </label>
-                <input
-                  type={key.includes("password") ? "password" : "text"}
-                  name={key}
-                  value={formData[key]}
-                  className="w-full mt-2 bg-zinc-900 text-zinc-100 p-2 outline-none"
-                  placeholder={key}
-                  required
-                  onChange={handleChange}
-                />
-              </div>
-            ))}
-            <button
-              type="submit"
-              className="mt-6 w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"
-              disabled={emailError}
-            >
-              Sign Up
-            </button>
-          </form>
+  const iconMap = {
+    username: <FaUser className="text-blue-300" />,
+    email: <FaEnvelope className="text-blue-300" />,
+    password: <FaLock className="text-blue-300" />,
+    confirmPassword: <FaLock className="text-blue-300" />,
+    address: <FaMapMarkerAlt className="text-blue-300" />,
+    phoneNumber: <FaPhone className="text-blue-300" />,
+  };
 
-          <div className="mt-4 text-center">
-            <p className="text-zinc-400">
-              Already have an account? <Link to="/login" className="text-blue-400">Log In</Link>
-            </p>
-          </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#1e1e2f] to-[#2c3e50] flex items-center justify-center p-6 relative overflow-hidden">
+
+      {/* Decorative Glass Background */}
+      <div className="absolute w-[90%] max-w-3xl h-[90%] rounded-[3rem] bg-gradient-to-r from-blue-400/30 to-purple-500/20 blur-3xl opacity-30 border-2 border-white/10 z-0 shadow-2xl"></div>
+
+      {/* Form Card */}
+      <div className="relative z-10 bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl w-full max-w-xl p-10 text-white transition-all duration-500">
+        <h2 className="text-3xl font-bold text-center mb-6 text-blue-200 tracking-wider">
+           Create Your Account
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {Object.keys(formData).map((key) => (
+            <div
+              className="flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-xl hover:border-blue-400 transition duration-300"
+              key={key}
+            >
+              {iconMap[key]}
+              <input
+                type={key.includes("password") ? "password" : "text"}
+                name={key}
+                value={formData[key]}
+                className="w-full bg-transparent placeholder-gray-300 text-white focus:outline-none"
+                placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+                required
+                onChange={handleChange}
+              />
+            </div>
+          ))}
+
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 py-3 rounded-xl font-semibold text-white tracking-wide shadow-md hover:shadow-indigo-400/40 transition-all duration-300 hover:scale-[1.02]"
+            disabled={emailError}
+          >
+             Sign Up
+          </button>
+        </form>
+
+        <div className="mt-4 text-center">
+          <p className="text-zinc-300">
+            Already have an account?{' '}
+            <Link to="/login" className="text-blue-400 hover:underline">Log In</Link>
+          </p>
         </div>
       </div>
-      <footer className="text-center text-zinc-400 bg-zinc-800 w-full py-2 fixed bottom-0 left-0">
-        © 2025 Your Company. All rights reserved.
-      </footer>
+
       <Snackbar open={snackbarOpen} autoHideDuration={2000} message="An OTP is sent to your email" />
     </div>
   );
