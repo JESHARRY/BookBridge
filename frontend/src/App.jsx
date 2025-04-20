@@ -5,7 +5,7 @@ import Footer from './components/Footer/Footer';
 import { Routes, Route } from "react-router-dom";
 import AllBooks from './pages/allBooks';
 import Login from './pages/login';
-import SignUp from './pages/signUp';
+import SignUp from './pages/SignUp';
 import Cart from './pages/cart';
 import Profile from './pages/profile';
 import ViewBookDetails from './components/ViewBookDetails/ViewBookDetails';
