@@ -1,0 +1,52 @@
+name: BookBridge CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'  # Use Node 18 for best compatibility
+
+      # Install frontend dependencies and build
+      - name: Install and build frontend
+        working-directory: ./frontend
+        run: |
+          npm install
+          npm run build
+
+      # Install backend dependencies
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
+
+      # Optional: Run backend tests here
+      # - name: Run backend tests
+      #   working-directory: ./backend
+      #   run: npm test
+
+      # Trigger deployment for frontend (Render)
+      - name: Deploy frontend to Render
+        run: |
+          curl -X POST https://api.render.com/deploy/YOUR_FRONTEND_DEPLOY_HOOK
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+
+      # Trigger deployment for backend (Render)
+      - name: Deploy backend to Render
+        run: |
+          curl -X POST https://api.render.com/deploy/YOUR_BACKEND_DEPLOY_HOOK
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
