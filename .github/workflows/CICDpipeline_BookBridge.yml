@@ -1,0 +1,30 @@
+name: build-and-deploy
+
+on:
+  push:
+    branches:
+      - main  # Change if your default branch is something else
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22.13.1'
+
+    - name: Install and build frontend
+      working-directory: ./frontend
+      run: |
+        npm install
+        npm run build
+
+    - name: Install backend dependencies
+      working-directory: ./backend
+      run: npm install
+
