@@ -1,0 +1,44 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22.13.1'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm test -- --coverage
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+      - name: Run functional tests
+        run: npm run test:functional
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Deploy if all tests pass
+        if: success()
+        run: npm run deploy
