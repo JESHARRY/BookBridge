@@ -19,6 +19,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.2",
     "nodemailer": "^6.10.0",
+    "connect-mongo": "^5.0.0",
     "speakeasy": "^2.0.0"
   }
 }
